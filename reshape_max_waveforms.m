@@ -1,5 +1,5 @@
-function [S,errormsg] = reshape_min_waveforms(waveform)
-% this function plots waveforms from data matrix size N x M
+function [S,errormsg] = reshape_max_waveforms(waveform)
+% this function plots waveforms from waveform 1 x M
 % file locations = s.obj.eventSeriesHash.value{i}.waveforms
 %waveform = data matrix
 %
@@ -10,8 +10,8 @@ l = size(waveform);
 R = waveform;
 A = abs(R);
 % find minimum
-minimum = min(R);
-[x,y] = find(R==minimum);
+maximum = max(R);
+[x,y] = find(R==maximum);
 
 try
     S = (R(1,(y-11):(y+40)));
