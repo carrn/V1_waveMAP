@@ -1,5 +1,4 @@
-
-function [gooda,noisya] = Waves1(varargin)
+function [good,noisy] = Waves1(varargin)
 % WAVES1 MATLAB code for Waves1.fig
 %      WAVES1, by itself, creates a new WAVES1 or raises the existing
 %      singleton*.
@@ -23,7 +22,7 @@ function [gooda,noisya] = Waves1(varargin)
 
 % Edit the above text to modify the response to help Waves1
 
-% Last Modified by GUIDE v2.5 11-Mar-2022 14:58:03
+% Last Modified by GUIDE v2.5 27-Feb-2022 16:21:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,20 +58,20 @@ function Waves1_OpeningFcn(hObject, eventdata, handles, varargin)
    % else
     %   disp(['User selected ', fullfile(pathname, filename)])
   %  end
-global noisya
+global noisy
 global nogood
-  global gooda
-  global x
+global good
+global x
 global yesflag
 yesflag = 0;
-gooda = [];
-noisya = [];
+good = [];
+noisy = [];
 nogood = [];
-%data_path = '/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path = 'C:\Users\ncarr\Documents\Data\Shude';
 filename = 'S1_manualsort_normalizedwaveforms.mat';
-%full_filename = fullfile(data_path, filename);
-load(filename);
-for x = 1:6
+full_filename = fullfile(data_path, filename);
+load(full_filename);
+for x = 1:size(align_all)
     plot(align_all(x,:))
     uiwait()
 end
@@ -90,7 +89,7 @@ guidata(hObject, handles);
 end
 
 % --- Outputs from this function are returned to the command line.
-function gooda = Waves1_OutputFcn(hObject, eventdata, handles) 
+function good = Waves1_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 
@@ -99,33 +98,39 @@ function gooda = Waves1_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 good{1} = handles.output;
+set(handles.edit1,'String',num2str(ID_all(x)));
 end
 
 % --- Executes on button press in Yes.
-function gooda =Yes_Callback(hObject, eventdata, handles)
+function good =Yes_Callback(hObject, eventdata, handles)
 % hObject    handle to Yes (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global yesflag
 yesflag = 1;
 uiresume()
-global gooda
+global good
 global x
-global noisya
-%data_path = '/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+global noisy
+data_path = 'C:\Users\ncarr\Documents\Data\Shude';
 filename = 'S1_manualsort_ID.mat';
-%full_filename = fullfile(data_path, filename);
-load(filename);
+full_filename = fullfile(data_path, filename);
+load(full_filename);
 savefile = 'waveform.mat';
 if yesflag == 1
-    gooda = [gooda; ID_all(x,:)];
+    good = [good, ID_all(x)];
+
 end
-save(savefile,'gooda')
+save(savefile,'good')
 disp(ID_all(x))
+%disp(x)
+%disp(good)
+%disp(noisy)
+
 
 
 end
-%C:\Users\ncarr\Documents\GitHub\Shude_waveforms\Manual Sort
+
 
 
 
@@ -138,7 +143,7 @@ global yesflag
 global x
 global nogood
 yesflag = 0;
-data_path = '/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path = 'C:\Users\ncarr\Documents\Data\Shude';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -148,57 +153,58 @@ if yesflag == 0
     nogood = [nogood,ID_all(x)];
 end
 save(savenogood,'nogood')
+%disp(nogood)
 disp(ID_all(x))
 uiresume()
 end
 
 % --- Executes on button press in save.
-function [gooda,noisya] = save_Callback(hObject, eventdata, handles)
+function [good,noisy] = save_Callback(hObject, eventdata, handles)
 % hObject    handle to save (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global good
-global noisya
+global noisy
 global x
 global yesflag
-data_path = 'Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path = 'C:\Users\ncarr\Documents\Data\Shude';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'waveform.mat';
 savenoisy = 'noisy.mat';
 if yesflag == 1
-    good = [good; ID_all(x,:)];
+    good = [good, ID_all(x)];
    
 end
 if yesflag == 2
-    noisya = [noisya;ID_all(x,:)];
+    noisy = [noisy,ID_all(x)];
 end
 save(savefile,'good')
-save(savenoisy,'noisya')
-disp(good)
-disp(noisya)
+save(savenoisy,'noisy')
+%disp(good)
+%disp(noisy)
 end
 
 
 % --- Executes on button press in pushbutton4.
-function noisya = pushbutton4_Callback(hObject, eventdata, handles)
+function noisy = pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global yesflag
-global noisya
+global noisy
 global x
-data_path ='/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path = 'C:\Users\ncarr\Documents\Data\Shude';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-savenoisy = 'noisya.mat';
+savenoisy = 'noisy.mat';
 yesflag = 2;
-uiresume();
+uiresume(); 
 if yesflag == 2
-    noisya = [noisya;ID_all(x,:)];
+    noisy = [noisy,ID_all(x)];
 end
-save(savenoisy,'noisya')
+save(savenoisy,'noisy')
 disp(ID_all(x))
 end

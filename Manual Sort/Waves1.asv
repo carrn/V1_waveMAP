@@ -68,10 +68,10 @@ yesflag = 0;
 gooda = [];
 noisya = [];
 nogood = [];
-%data_path = '/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path = 'Users/ncarr/Github/Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_normalizedwaveforms.mat';
-%full_filename = fullfile(data_path, filename);
-load(filename);
+full_filename = fullfile(data_path, filename);
+load(full_filename);
 for x = 1:6
     plot(align_all(x,:))
     uiwait()
@@ -112,10 +112,10 @@ uiresume()
 global gooda
 global x
 global noisya
-%data_path = '/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path = 'Users/ncarr/Github/Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_ID.mat';
-%full_filename = fullfile(data_path, filename);
-load(filename);
+full_filename = fullfile(data_path, filename);
+load(full_filename);
 savefile = 'waveform.mat';
 if yesflag == 1
     gooda = [gooda; ID_all(x,:)];
@@ -189,7 +189,7 @@ function noisya = pushbutton4_Callback(hObject, eventdata, handles)
 global yesflag
 global noisya
 global x
-data_path ='/Users/ncarr/Github/Shude_waveforms/Manual Sort';
+data_path ='Users/ncarr/Github/Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
