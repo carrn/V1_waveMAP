@@ -67,11 +67,11 @@ yesflag = 0;
 good = [];
 noisy = [];
 nogood = [];
-data_path = 'C:\Users\ncarr\Documents\Data\Shude';
+data_path = 'Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_normalizedwaveforms.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-for x = 1:size(align_all)
+for x = 1:6%size(align_all)
     plot(align_all(x,:))
     uiwait()
 end
@@ -112,13 +112,13 @@ uiresume()
 global good
 global x
 global noisy
-data_path = 'C:\Users\ncarr\Documents\Data\Shude';
+data_path = 'Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'waveform.mat';
 if yesflag == 1
-    good = [good, ID_all(x)];
+    good = [good; ID_all(x,:)];
 
 end
 save(savefile,'good')
@@ -143,14 +143,14 @@ global yesflag
 global x
 global nogood
 yesflag = 0;
-data_path = 'C:\Users\ncarr\Documents\Data\Shude';
+data_path = 'Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savenogood = 'no.mat';
 uiresume();
 if yesflag == 0
-    nogood = [nogood,ID_all(x)];
+    nogood = [nogood;ID_all(x,:)];
 end
 save(savenogood,'nogood')
 %disp(nogood)
@@ -167,18 +167,18 @@ global good
 global noisy
 global x
 global yesflag
-data_path = 'C:\Users\ncarr\Documents\Data\Shude';
+data_path = 'Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'waveform.mat';
 savenoisy = 'noisy.mat';
 if yesflag == 1
-    good = [good, ID_all(x)];
+    good = [good; ID_all(x,:)];
    
 end
 if yesflag == 2
-    noisy = [noisy,ID_all(x)];
+    noisy = [noisy;ID_all(x,:)];
 end
 save(savefile,'good')
 save(savenoisy,'noisy')
@@ -195,7 +195,7 @@ function noisy = pushbutton4_Callback(hObject, eventdata, handles)
 global yesflag
 global noisy
 global x
-data_path = 'C:\Users\ncarr\Documents\Data\Shude';
+data_path = 'Shude_waveforms/Manual Sort';
 filename = 'S1_manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -203,7 +203,7 @@ savenoisy = 'noisy.mat';
 yesflag = 2;
 uiresume(); 
 if yesflag == 2
-    noisy = [noisy,ID_all(x)];
+    noisy = [noisy;ID_all(x,:)];
 end
 save(savenoisy,'noisy')
 disp(ID_all(x))
