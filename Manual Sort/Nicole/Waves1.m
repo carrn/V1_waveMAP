@@ -68,7 +68,7 @@ good = [];
 noisy = [];
 nogood = [];
 data_path = 'Shude_waveforms/Manual Sort';
-filename = 'S1_manualsort_normalizedwaveforms.mat';
+filename = 'manualsort_normalizedwaveforms.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 for x = 1:6%size(align_all)
@@ -113,7 +113,7 @@ global good
 global x
 global noisy
 data_path = 'Shude_waveforms/Manual Sort';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'waveform.mat';
@@ -144,7 +144,7 @@ global x
 global nogood
 yesflag = 0;
 data_path = 'Shude_waveforms/Manual Sort';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savenogood = 'no.mat';
@@ -168,7 +168,7 @@ global noisy
 global x
 global yesflag
 data_path = 'Shude_waveforms/Manual Sort';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'waveform.mat';
@@ -196,7 +196,7 @@ global yesflag
 global noisy
 global x
 data_path = 'Shude_waveforms/Manual Sort';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savenoisy = 'noisy.mat';

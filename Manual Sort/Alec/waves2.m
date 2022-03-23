@@ -67,7 +67,7 @@ filename = 'secondalign.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 data_path = '/Users/alecperliss/Downloads';
-filename = 'S1_manualsort_normalizedwaveforms.mat';
+filename = 'manualsort_normalizedwaveforms.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 
@@ -113,7 +113,7 @@ global good2
 global x
 global noisy2
 data_path = '/Users/alecperliss/Downloads';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'good2.mat';
@@ -139,7 +139,7 @@ global yesflag
 global noisy2
 global x
 data_path = '/Users/alecperliss/Downloads';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savenoisy = 'noisy2.mat';
@@ -163,7 +163,7 @@ global x
 global nogood2
 yesflag = 0;
 data_path = '/Users/alecperliss/Downloads';
-filename = 'S1_manualsort_ID.mat';
+filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savenogood = 'no2.mat';
