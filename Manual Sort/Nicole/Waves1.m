@@ -71,7 +71,7 @@ data_path = 'Shude_waveforms/Manual Sort';
 filename = 'manualsort_normalizedwaveforms.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-for x = 1:6%size(align_all)
+for x = 1:size(align_all)
     plot(align_all(x,:))
     uiwait()
 end
@@ -116,7 +116,7 @@ data_path = 'Shude_waveforms/Manual Sort';
 filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-savefile = 'waveform.mat';
+savefile = 'n_waveform.mat';
 if yesflag == 1
     good = [good; ID_all(x,:)];
 
@@ -147,7 +147,7 @@ data_path = 'Shude_waveforms/Manual Sort';
 filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-savenogood = 'no.mat';
+savenogood = 'n_no.mat';
 uiresume();
 if yesflag == 0
     nogood = [nogood;ID_all(x,:)];
@@ -171,8 +171,8 @@ data_path = 'Shude_waveforms/Manual Sort';
 filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-savefile = 'waveform.mat';
-savenoisy = 'noisy.mat';
+savefile = 'n_waveform.mat';
+savenoisy = 'n_noisy.mat';
 if yesflag == 1
     good = [good; ID_all(x,:)];
    
@@ -199,7 +199,7 @@ data_path = 'Shude_waveforms/Manual Sort';
 filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-savenoisy = 'noisy.mat';
+savenoisy = 'n_noisy.mat';
 yesflag = 2;
 uiresume(); 
 if yesflag == 2
