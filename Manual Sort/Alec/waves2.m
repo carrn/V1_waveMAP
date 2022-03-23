@@ -118,7 +118,7 @@ full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'good2.mat';
 if yesflag == 1
-    good2 = [good2, ID_all(x)];
+    good2 = [good2; ID_all(x,:)];
 end
 save(savefile,'good2')
 disp(ID_all(x))
