@@ -107,9 +107,10 @@ function yes_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global yesflag
+global k 
 yesflag = 1;
 uiresume()
-global good2
+global good22
 global x
 global noisy2
 data_path = '/Users/alecperliss/Downloads';
@@ -117,11 +118,14 @@ filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'good2.mat';
-if yesflag == 1
-    good2 = [good2; ID_all(x,:)];
+for x = 1:length(secondalign)
+    k = secondalign(x);
+    if yesflag == 1
+    good22 = [good22; ID_all(k,:)];
+    end
 end
 save(savefile,'good2')
-disp(ID_all(x))
+disp(ID_all(k,:))
 
 
 end
@@ -150,6 +154,7 @@ if yesflag == 2
 end
 save(savenoisy,'noisy2')
 disp(ID_all(x))
+disp(ID_all(x,:))
 end
 
 
