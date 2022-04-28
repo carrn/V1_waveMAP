@@ -1,4 +1,4 @@
-function [good,noisy] = Waves1(varargin)
+function [good,noisy] = Waves2(varargin)
 % WAVES1 MATLAB code for Waves1.fig
 %      WAVES1, by itself, creates a new WAVES1 or raises the existing
 %      singleton*.
@@ -72,7 +72,7 @@ filename = 'manualsort_allSessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 for x = 1:size(manualsort)
-    plot(manualsort(x,:))
+    plot(align_all(x,:))
     uiwait()
 end
 
@@ -98,7 +98,7 @@ function good = Waves1_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 good{1} = handles.output;
-set(handles.edit1,'String',num2str(manualsortID(x)));
+set(handles.edit1,'String',num2str(ID_all(x)));
 end
 
 % --- Executes on button press in Yes.
@@ -118,11 +118,11 @@ full_filename = fullfile(data_path, filename);
 load(full_filename);
 savefile = 'n_waveform.mat';
 if yesflag == 1
-    good = [good; manualsortID(x,:)];
+    good = [good; ID_all(x,:)];
 
 end
 save(savefile,'good')
-disp(manualsortID(x))
+disp(ID_all(x))
 %disp(x)
 %disp(good)
 %disp(noisy)
@@ -206,5 +206,5 @@ if yesflag == 2
     noisy = [noisy;manualsortID(x,:)];
 end
 save(savenoisy,'noisy')
-disp(manualsortID(x))
+disp(ID_all(x))
 end
