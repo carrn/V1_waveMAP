@@ -75,7 +75,7 @@ j =[];
 for x = 1:length(secondalign)
     k = secondalign(x);
     %j = [j; secondalign(x)]
-    plot(align_all(k,:))
+    plot(manualsort(k,:))
     uiwait()
 end
 
