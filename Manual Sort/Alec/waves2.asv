@@ -72,7 +72,7 @@ filename = 'manualsort_allsessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
 j =[];
-for x = 1:length(secondalign)
+for x = 1%length(secondalign)
     k = secondalign(x);
     %j = [j; secondalign(x)]
     plot(manualsort(k,:))
@@ -133,7 +133,7 @@ j=[];
 if yesflag == 1
     
         j = secondalign(x);
-        good2 = [good2; manualsortID(j,:)];
+        good2 = [good2; ID_all(j,:)];
    
 end
     
