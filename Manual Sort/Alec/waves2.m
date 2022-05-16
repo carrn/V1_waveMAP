@@ -63,11 +63,11 @@ yesflag = 0;
 good2 = [];
 noisy2 = [];
 nogood2 = [];
-data_path = '/Users/alecperliss/Downloads';
+data_path = '/Users/alecperliss/Downloads/Chand Lab';
 filename = 'secondalign.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-data_path = '/Users/alecperliss/Downloads';
+data_path = '/Users/alecperliss/Downloads/Chand Lab';
 filename = 'manualsort_allsessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -119,11 +119,11 @@ uiresume()
 global good2
 global x
 global noisy2
-data_path = '/Users/alecperliss/Downloads';
+data_path = '/Users/alecperliss/Downloads/Chand Lab';
 filename = 'secondalign.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
-data_path = '/Users/alecperliss/Downloads';
+data_path = '/Users/alecperliss/Downloads/Chand Lab';
 filename = 'manualsortID_allsessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -156,7 +156,7 @@ function noisy_Callback(hObject, eventdata, handles)
 global yesflag
 global noisy2
 global x
-data_path = '/Users/alecperliss/Downloads';
+data_path = '/Users/alecperliss/Downloads/Chand Lab';
 filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -181,7 +181,7 @@ global yesflag
 global x
 global nogood2
 yesflag = 0;
-data_path = '/Users/alecperliss/Downloads';
+data_path = '/Users/alecperliss/Downloads/Chand Lab';
 filename = 'manualsort_ID.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
