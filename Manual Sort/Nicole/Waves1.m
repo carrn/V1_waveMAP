@@ -67,7 +67,7 @@ yesflag = 0;
 good = [];
 noisy = [];
 nogood = [];
-data_path = 'Shude_waveforms/Manual Sort/20220427';
+data_path = 'Shude_waveforms/Manual Sort/20220516';
 filename = 'manualsort_allSessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -112,7 +112,7 @@ uiresume()
 global good
 global x
 global noisy
-data_path = 'Shude_waveforms/Manual Sort/20220427';
+data_path = 'Shude_waveforms/Manual Sort/20220516';
 filename = 'manualsortID_allSessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -143,7 +143,7 @@ global yesflag
 global x
 global nogood
 yesflag = 0;
-data_path = 'Shude_waveforms/Manual Sort/20220427';
+data_path = 'Shude_waveforms/Manual Sort/20220516';
 filename = 'manualsortID_allSessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -167,7 +167,7 @@ global good
 global noisy
 global x
 global yesflag
-data_path = 'Shude_waveforms/Manual Sort/20220427';
+data_path = 'Shude_waveforms/Manual Sort/20220516';
 filename = 'manualsortID_allSessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
@@ -195,7 +195,7 @@ function noisy = pushbutton4_Callback(hObject, eventdata, handles)
 global yesflag
 global noisy
 global x
-data_path = 'Shude_waveforms/Manual Sort/20220427';
+data_path = 'Shude_waveforms/Manual Sort/20220516';
 filename = 'manualsortID_allSessions.mat';
 full_filename = fullfile(data_path, filename);
 load(full_filename);
