@@ -21,13 +21,11 @@ clusterFnData = readmatrix('/cluster_data_final.csv');
 % 20 - umap_y seed for paper
 % 21 - depth bins
 % 22 - repWidth
-
-
+vResp = clusterFnData(:,12);
+clusterFnData = clusterFnData(find(vResp), :);
 %%
 
 
-vResp = clusterFnData(:,12);
-clusterFnData = clusterFnData(find(vResp), :);
 clusterFnData(:,1) = clusterFnData(:,1)+1;
 clusterFnData(:,15) = clusterFnData(:,15)+1;
 clusterFn = clusterFnData(:,15);
@@ -126,6 +124,38 @@ switch layer
     otherwise
 end
 end
+%% Fig3B
+%clusterFnData = readmatrix('/cluster_data_chand.csv');
+unCl = unique(clusterFnData(:,15))
+unLa = [1:4]
+M = [];
+b = 0;
+for clusterID=[1 6 8 2 7 3 9 5 4]
+    b = b+1;
+  for layerID = 1:length(unLa)
+    iX = find(clusterFnData(:,15) == unCl(clusterID) & clusterFnData(:,21) == unLa(layerID));
+    M(b,layerID) = nanmean(clusterFnData(iX,18));
+  end
+  iX2 = find(clusterFnData(:,15) == unCl(clusterID));
+  MperCluster(clusterID) = nanmean(clusterFnData(iX2,18));
+  DIperCluster(clusterID) = nanmean(clusterFnData(iX2,7));
+end
+figure;
+imagesc(M);
+colorbar
+%%
+figure
+for clusterID = 1:9
+    iX = find(clusterFnData(:,15) == unCl(clusterID));
+    scatter(clusterFnData(iX,18),clusterFnData(iX,7),[],colors{clusterID},'o')
+    hold on
+end
+%% Fig 3C
+figure
+for clusterID = 1:9
+    scatter(MperCluster(clusterID),DIperCluster(clusterID),[],colors{clusterID},'o','filled')
+    hold on
+end
 %%
 size(clusterFnData);
 
@@ -172,10 +202,10 @@ for pcID=1:3
     
     
     
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X(:,[1:7]));% Depth; UMAP X; UMAP Y; UMAP X + Depth interaction; UMAP Y + Depth interaction; % Interaction between depth, UMAP XY
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X(:,[1:7]));% Depth; UMAP X; UMAP Y; UMAP X + Depth interaction; UMAP Y + Depth interaction; % Interaction between depth, UMAP XY
     varExplained(1) = st(1);
     
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X(:,[1 2 3 7]));% Depth; UMAP X; UMAP Y
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X(:,[1 2 3 7]));% Depth; UMAP X; UMAP Y
     varExplained(2) = st(1);
     
     %     [b,bi,c,ci,st] = regress(coeff(:,k), X(:,[1 2 7]));% Depth; UMAP X
@@ -184,13 +214,13 @@ for pcID=1:3
     %     [b,bi,c,ci,st] = regress(coeff(:,k), X(:,[1 3 7]));% Depth; UMAP Y
     %     varExplained(4) = st(1);
     
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X(:,[1 7]));%Depth
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X(:,[1 7]));%Depth
     varExplained(3) = st(1);
     
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X(:,[2 3 7])); %UMAP X; UMAP Y
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X(:,[2 3 7])); %UMAP X; UMAP Y
     varExplained(4) = st(1);
         
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X(:,[8 7]));%Depth
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X(:,[8 7]));%Depth
     varExplained(5) = st(1);
     
     
@@ -222,31 +252,31 @@ for pcID=1:3
     allData = clusterFnData(:,[15]);
     X = dummyvar(allData + 1);
     X(:, end+1) = clusterFnData(:,2);   
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X); %z-scored candidate cell type(1.0), depth;
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X); %z-scored candidate cell type(1.0), depth;
     varExplained(6) = st(1);
     
     
     X = dummyvar(allData + 1);
-    [b,bi,c,ci,st] = regress(coeff(:,pcID), X); %z-scored candidate cell type(1.0);
+    [clusterID,bi,layerID,ci,st] = regress(coeff(:,pcID), X); %z-scored candidate cell type(1.0);
     varExplained(7) = st(1);
     
     
     
     subplot(1,3,pcID);
-    b = bar(1:7, varExplained*100);
+    clusterID = bar(1:7, varExplained*100);
     set(gca,'xticklabel',{'Depth + UMAP + Interactions','Depth + UMAP', 'Depth', 'UMAP','Depth Scaled','Depth + Candidate Cell Type 2.5','Candidate Cell Type 2.5'});
     set(gca,'box','off','TickDir','out') 
     ylim([0 11]);
     ylabel('% Variance Explained')
     title(sprintf(['PC',num2str(pcID)]))
-    b.FaceColor = 'flat';
-    b.CData(1,:) = [0.7490    0.4039    0.7490];
-    b.CData(2,:) = [0.7490    0.4039    0.7490];
-    b.CData(3,:) = [0.7490    0.4039    0.7490];
-    b.CData(4,:) = [0.7490    0.4039    0.7490];
-    b.CData(5,:) = [0.7490    0.4039    0.7490];
-    b.CData(6,:) = [.5 0 .5];
-    b.CData(7,:) = [.5 0 .5];
+    clusterID.FaceColor = 'flat';
+    clusterID.CData(1,:) = [0.7490    0.4039    0.7490];
+    clusterID.CData(2,:) = [0.7490    0.4039    0.7490];
+    clusterID.CData(3,:) = [0.7490    0.4039    0.7490];
+    clusterID.CData(4,:) = [0.7490    0.4039    0.7490];
+    clusterID.CData(5,:) = [0.7490    0.4039    0.7490];
+    clusterID.CData(6,:) = [.5 0 .5];
+    clusterID.CData(7,:) = [.5 0 .5];
 end
 %%
 

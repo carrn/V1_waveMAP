@@ -64,7 +64,7 @@ for clusterID=1:max(cluster)%[3 7 1 8]%
     %distFromSoma = [1:2:numChannels];
     subplot(max(cluster),1,clusterID);
     colormap turbo
-    imagesc(time(11:55),distFromSoma,nanmedian(spread(:,11:55,:),3))
+    imagesc(time(11:50),distFromSoma,nanmedian(spread(:,11:50,:),3))
     colorbar
     
     AmpPerCluster(clusterID).id = unitIds;
@@ -89,9 +89,9 @@ xlabel('Time (ms)')
 %print -depsc -tiff -r300 -painters multiChannelWaveformforPoster.eps
 %% Example of Spatial Profile
 figure
-for clusterID=4
+for clusterID=1
     for sessionID = 1
-        unitID = 2;
+        unitID = 4;
         uId = allWaveforms(sessionID).clusters(clusterID).ID(unitID)+1;
         depth = allWaveforms(sessionID).clusters(clusterID).depth_scaled(unitID);
         trajectory = allWaveforms(sessionID).trajectory;
@@ -121,7 +121,7 @@ for clusterID=4
     
     subplot(2,1,2)
     for channels = 1:11
-        a = 10;%25
+        a = 40
         [peak, peakIdx] = max(currSpread(channels,11:55)+channels*2*a);
         [trough, troughIdx] = min(currSpread(channels,11:55)+channels*2*a);
         time1 = time(11:55);
@@ -265,13 +265,13 @@ for clusterID=1:max(cluster)
         allBt_below(clusterID,n,:) = bS;
     end
     
-    ylim([-0.1 0.1])
-    xlim([-0.1 0.2])
-    grid on
-    ylabel('Distance from Soma (mm)')
-    xlabel('Time Relative to Soma (ms)')
+    ylim([-0.1 0.1]) 
+    xlim([-0.1 0.2]) 
+    grid on 
+    ylabel('Distance from Soma (mm)') 
+    xlabel('Time Relative to Soma (ms)') 
     set(gca,'box','off','TickDir','out') 
-    
+    set(gcf,'renderer','Painters')
 end
 
 
@@ -333,7 +333,7 @@ plot([-2:0.1:2],[2:-0.1:-2])
 %print -depsc -tiff -r300 -painters Trough_aboveandTrough_belowVelocitiesforPoster.eps  
 %% symmetry index 
 figure 
-for clusterID = setdiff(1:9,[])
+for clusterID = setdiff(1:9,[7])
     troughErr = squeeze(nanstd(allBt_above(clusterID,:,1),[],2));
     peakErr = squeeze(nanstd(allBt_below(clusterID,:,1),[],2));
 errorbar(fitTroughProp_below(1,clusterID), fitTroughProp(1,clusterID),troughErr,troughErr,peakErr,peakErr,'o', 'Color',colors{clusterID})    
@@ -341,43 +341,69 @@ hold on
 axis equal
 grid on
 hold on
-plot([-2:0.1:2],[2:-0.1:-2])
+%plot([-2:0.1:2],[2:-0.1:-2])
 end
 
-
-xline(ax1,-1.25,':');
-ax1.Box = 'off';
-xlim(ax1,[-2.25 -1.25])
-ax2.YAxis.Visible = 'off';
-ax2.Box = 'off';
-xlim(ax2,[-0.4 0.4])
 
 yline([1])
 xline([0])
 hold on
 plot([-2:0.1:2],[2:-0.1:-2])
+%ylim([-1 1])
+xlim([-1.5 1])
 %ylabel('Slope of Trough Propagation Velocity towards Pia (mm/ms)')
 %xlabel('Slope of Trough Propagation Velocity away from Pia (mm/ms)')
 
 %print -depsc -tiff -r300 -painters Trough_aboveandTrough_belowVelocitiesforPoster.eps  
-%% Symmetry Index
+%% Symmetry Index Fig 5 E
 a = 1;
 b = 1;
 c = 0;
-x0 = fitTroughProp_below(1,:);
-y0 = fitTroughProp(1,:);
+%x0 = fitTroughProp_below(1,:);
+%y0 = fitTroughProp(1,:);
+
+troughErr = squeeze(nanstd(allBt_below(:,:,1),[],2));
+peakErr = squeeze(nanstd(allBt_above(:,:,1),[],2));
+
 
 SI = abs(a*x0+b*y0+c)/sqrt(a^2+b^2);
+SI_err = abs(a*troughErr+b*peakErr+c)/sqrt(a^2+b^2);
 
 figure
-plot(SI,'o')
+cnt = 0;
+
+for clusterID = [1 6 8 2 7 3 9 5 4]
+    cnt = cnt+1;
+    errorbar(cnt,SI(clusterID),SI_err(clusterID),SI_err(clusterID),'o','color',colors{clusterID})
+    hold on
+end
+xlim([0 10])
+%% Significance of SI differences
 
 
-v_1 = [x2,y2,0] - [x1,y1,0];
-v_2 = [x3,y3,0] - [x1,y1,0];
-Theta = atan2(norm(cross(v_1, v_2)), dot(v_1, v_2));
+x0 = allBt_below(:,:,1);
+y0 = allBt_above(:,:,1);
 
-%%
+troughErr = squeeze(nanstd(allBt_below(:,:,1),[],2));
+peakErr = squeeze(nanstd(allBt_above(:,:,1),[],2));
+
+SI = abs(a*x0+b*y0+c)/sqrt(a^2+b^2);
+SI_err = abs(a*troughErr+b*peakErr+c)/sqrt(a^2+b^2);
+
+figure
+cnt = 0;
+for clusterID = [1 6 8 2 7 3 9 5 4]
+    cnt = cnt+1;
+    errorbar(cnt,nanmean(SI(clusterID),2),SI_err(clusterID),SI_err(clusterID),'o','color',colors{clusterID})
+    hold on
+end
+% plot(nanmean(SI,2),'o')
+[h,p,ci,stats]=ttest(SI(3,:),SI(4,:))
+%v_1 = [x2,y2,0] - [x1,y1,0];
+%v_2 = [x3,y3,0] - [x1,y1,0];
+%Theta = atan2(norm(cross(v_1, v_2)), dot(v_1, v_2));
+
+%% Backprop by layer
 layerIds = vertcat(AmpPerCluster.depth_bins);
 clusterIds = [];
 for n=1:length(AmpPerCluster)
@@ -396,7 +422,7 @@ selectedData(selectedData < lims(1) | selectedData > lims(2) | selectedData < -0
        
 distFromSoma = [-0.1:0.02:0.1];
 
-%%
+%% Backprop by layer
 figure;
 % plot( nanmean(selectedData(layerIds==4  & ismember(clusterIds, [1 2 6 8]),:)), distFromSoma, 'r-');
 hold on;
@@ -429,7 +455,7 @@ plot( nanmean(selectedData(layerIds==1 & ismember(clusterIds, [3  5 9]),:)), dis
 
 
 
-%% Trough Propagation Velocities by layer
+%% Trough Propagation Velocities by layer and cluster
 %figure
 allTroughTime = [];
 fitTroughProp_below = [];
@@ -792,11 +818,12 @@ scatter(fitPeakProp(2,:), fitTroughProp(1,:), [], colors1, 'filled')
 ylabel('Trough')
 xlabel('Peak')
 set(gca,'box','off','TickDir','out') 
-%% Hist of trough to peak Duration
+%% Hist of trough to peak Duration and T-P Dur per cluster
 allDur = [];
 figure
 for clusterID=1:max(cluster)
     Dur =  AmpPerCluster(clusterID).duration;
+    DurErr = std(Dur);
     %subplot(max(cluster),1,clusterID);
     allDur = [allDur; Dur];
     
@@ -804,7 +831,7 @@ for clusterID=1:max(cluster)
     %fprintf('\n%3.2f', median(RangeV{f}))
     %fprintf('\n%3.2f', mean(RangeV{f}))
     title(sprintf(['Cluster ',num2str(clusterID)]))
-    fprintf('\n%d: %3.2f', clusterID, nanmedian(Dur))
+    fprintf('\n%d: %3.2f +- %3.2f', clusterID, nanmedian(Dur),DurErr)
 end
 histogram(allDur,[-0.4:0.05:1],'Normalization','probability');
  xlabel('Amplitude')
@@ -866,7 +893,7 @@ xlabel('Cluster')
 set(gca,'box','off','TickDir','out') 
 % print -depsc -tiff -r300 -painters medianAmpPerClusterforPoster.eps
 
-%%
+%% mean Amp and Trough Velocity
 xIds = 1:9;
 Mu = squeeze(nanmean(allBt_above(xIds,:,1),2));
 %MuErr = squeeze(nanstd(allBt_above(xIds,:,1),2));
@@ -888,7 +915,7 @@ set(gca,'box','off','TickDir','out')
 
 corr(Mu1, allAmps(xIds))
 %figure; scatter3(allAmps(xIds), Mu1, Mu2(:,1),[],colors1)
-print -depsc -tiff -r300 -painters meanAmpandTroughVelocityAboveforPoster.eps
+%print -depsc -tiff -r300 -painters meanAmpandTroughVelocityAboveforPoster.eps
 %% Median Trajectories
 figure
 for clusterID=1:max(cluster)

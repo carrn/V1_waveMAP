@@ -18,14 +18,14 @@ for clusterID = [1 6 8 2 7 3 9 5 4] %1:max(cluster)
     yline([avgLayerBounds(:,1);avgLayerBounds(:,2)],'-')
     xline(1,'--')
     set(gca,'box','off','TickDir','out') 
-    
+        xlim([0 2])
     subplot(2,max(cluster),i+max(cluster))
-    
+
     histogram(FnProp,edges,'Normalization','probability','FaceColor',colors{clusterID})
     ylim([0 1])
     xlim([0 2])
     xline(1,'--')
-    xline(nanmean(FnProp),'-')
+    %xline(nanmean(FnProp),'-')
     set(gca,'box','off','TickDir','out') 
     
 end
@@ -35,6 +35,7 @@ xlabel('Cluster')
 
 %% All Simple Complex cells
 figure
+ampFn = clusterFnData(:,18);
 edges = [0:0.4:1];
 for clusterID = 1:max(cluster)
     %subplot(2,1,1)
@@ -43,7 +44,9 @@ for clusterID = 1:max(cluster)
     FnProp2 = ampFn(clusterFn==clusterID);
     FnProp1 = clusterFn(clusterFn==clusterID);
     %FnProp2/max(ampFn)*100;
-    scatter(FnProp,depthIdx,FnProp1*5,colors{clusterID})
+    %FnProp1*5
+    %colors{clusterID}
+    scatter(FnProp,depthIdx,[],[0.4 0.4 0.4])
     yline([avgLayerBounds(:,1);avgLayerBounds(:,2)],'-')
     xline(1,'--')
     set(gca,'box','off','TickDir','out')
@@ -62,10 +65,11 @@ title('Simple Complex Index')
 ylabel('Distance from Layer 4 (um)')
 xlabel('Cluster')
 %set(gca,'xtick',[],'XColor', 'none')
-%set(gcf,'renderer','Painters')
+
 
 %% 
-%print -depsc -tiff -r300 -painters SimpleComplexIndexforPoster.eps 
+set(gcf,'renderer','Painters')
+print -depsc -tiff -r300 -painters SimpleComplexIndexforPoster.eps 
 
 %% Orientation Index figure
 orientationIdxFn = clusterFnData(:,5);
