@@ -1,17 +1,18 @@
+%% Loading data
 load('allWaveforms.mat')
 load('AmpPerCluster.mat')
 load('clusterFnData042925.mat')
-%%
+%% Loading Cluster Functional Data, removing non visually responsive units
 
 session = clusterFnData(:,4);
 cluster = clusterFnData(:,15);
 ID = clusterFnData(:,3);
 vis_resp = clusterFnData(:,12);
 vResp = clusterFnData(:,12);
-clusterFnData = clusterFnData(find(vResp), :);
+clusterFnData = clusterFnData(find(vResp),:);
 clusterFn = clusterFnData(:,15);
 depth_scaled = clusterFnData(:,16);
-
+%% Removing non visually responsive units
 for sessionID = 1:max(session)
     sessionI = clusterFnData(:,4) == sessionID;
     for clusterID = 1:max(cluster)
@@ -32,7 +33,7 @@ for sessionID = 1:max(session)
         allWaveforms(sessionID).clusters(clusterID).depth_scaled = extractarray(allWaveforms(sessionID).avg_waveformID,allWaveforms(sessionID).clusters(clusterID).ID,allWaveforms(sessionID).scaled_depth);
         allWaveforms(sessionID).clusters(clusterID).layerID = extractarray(allWaveforms(sessionID).avg_waveformID,allWaveforms(sessionID).clusters(clusterID).ID,allWaveforms(sessionID).layerId);
         allWaveforms(sessionID).clusters(clusterID).snr = extractarray(allWaveforms(sessionID).avg_waveformID,allWaveforms(sessionID).clusters(clusterID).ID,allWaveforms(sessionID).snr);
-
+        
     end
 end
 
@@ -85,7 +86,7 @@ for clusterID = [1 2 6 8 7 3 4 5 9]
         allWaveforms(sessionID).clusters(clusterID).varISI = varISI;
         allWaveforms(sessionID).clusters(clusterID).meanISI = meanISI;
         allWaveforms(sessionID).clusters(clusterID).CV = varISI./meanISI;
-       
+        
     end
     
     concatSpikeTimes{clusterID} = ISIdensity;

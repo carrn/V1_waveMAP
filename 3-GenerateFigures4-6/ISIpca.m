@@ -1,5 +1,4 @@
-
-%% Initialize All ISI and SNR
+%% Generate All ISI
 AllISI = [];
 AllSNR = [];
 cId = [];
@@ -18,12 +17,122 @@ for clusterID = [1 6 8 2 7 3 9 5 4]
 end
 
 AllISI = AllISI./repmat(max(AllISI,[],2),[1 size(AllISI,2)]);
+% AllISI = (AllISI - repmat(nanmean(AllISI,2),[1 size(AllISI,2)]))./repmat(nanstd(AllISI,[],2),[1 size(AllISI,2)])
 [e,S,v, tSquare, Explained, mu] = pca(AllISI');
-
+% e = rotatefactors(e(:,1:6));
+%e(:,3) = -e(:,3);
+%S(:,3) = -S(:,3);
 
 loadings = [uId, e(:,3), e(:,2), e(:,1)];
 % transfer into ClusterFN Data in the correct order
 
+%clusterFnData(:,30) = -clusterFnData(:,30);
+%% PC shapes Fig 5C
+figure;
+cnt = 1;
+eV = [];
+eVe = [];
+
+for clusterID = [1:9]
+    eV(cnt,:) = nanmean(e(cId==clusterID,:));
+    eVe(cnt,:) = nanstd(e(cId==clusterID,:))./sqrt(sum(cId==clusterID));
+    cnt = cnt + 1;
+end
+plot(S(:,1:4))
+%% 3D PCs
+figure; 
+% hold on;
+  plot3(e(cId==1,1), e(cId==1,2), e(cId==1,3),'.','color',colors{1});
+ hold on
+ plot3(e(cId==4,1), e(cId==4,2), e(cId==4,3),'.','color',colors{5});
+% hold on
+% plot3(e(cId==4,1), e(cId==4,2), e(cId==4,3),'.','color',colors{4});
+
+%% Figure 5D
+figure
+pc_a = 1;
+pc_b = 3;
+cnt = 1;
+for clusterID=1:9
+    c = clusterID;
+    %plot3(eV(c,1), eV(c,2), eV(c,3), 'o','markerfacecolor',colors{c},'markeredgecolor','k','markersize',12);
+     errorbar(eV(clusterID,pc_a),eV(clusterID,pc_b),eVe(clusterID,pc_b),eVe(clusterID,pc_b),eVe(clusterID,pc_a),eVe(clusterID,pc_a),'o','color',colors{clusterID})
+    hold on;
+end
+xlabel(sprintf('PC %d',pc_a))
+ylabel(sprintf('PC %d',pc_b))
+
+
+%%
+figure
+for clusterID = 1:9
+    shaded_errorbar(D(1:end-1), nanmean(AllISI(cId==clusterID,:)),nanstd(AllISI(cId==clusterID,:))./sqrt(sum(cId==clusterID)),colors{clusterID},alpha)
+ %plot(D(2:end),nanmean(AllISI(cId==c,:)),'color',colors{c})
+hold on
+end
+%% sorted ISIs
+clear ISIcolor
+clear sortedISI
+clear ISIidx
+clear ISIcluster
+[sortedISI, ISIidx] = sortrows(AllISI, 'ascend');
+for i = 1:length(ISIidx)
+    ISIcluster(i) = clusterFnData(ISIidx(i),21);
+    if isnan(ISIcluster(i))
+        ISIcluster(i) = 6;
+    end
+    ISIcolor(i) = clusterColors(ISIcluster(i));
+end
+figure
+imagesc(sortedISI)
+%% Rug plot
+n_pixels = 5;
+ISIcolor = cell2mat(ISIcolor);
+ISIcolor = reshape(ISIcolor, [3, 607]).*255;
+ISIr = repmat(ISIcolor(1,:),n_pixels,1);
+ISIg = repmat(ISIcolor(2,:),n_pixels,1);
+ISIb = repmat(ISIcolor(3,:),5,1);
+ISIcolorrgb(:,:,1) = ISIr;
+ISIcolorrgb(:,:,2) = ISIg;
+ISIcolorrgb(:,:,3) = ISIb;
+ISIcolorrgb = uint8(ISIcolorrgb);
+%
+ISIcolorrgb = uint8(ISIcolorrgb);
+figure
+imshow(ISIcolorrgb)
+
+%% ISI by cluster
+clear ISIcolor
+clear sortedISI
+clear ISIidx
+clear ISIcluster
+sortedISI = [];
+for clusterID = [1 6 8 2 7 3 9 5 4]
+    sortedISI = [sortedISI; sortrows(AllISI(cId == clusterID,:),[1 2 3 4 5 6 7 8])];
+
+end
+figure
+imagesc(sortedISI)
+%% Rug plot by cluster Fig 5B
+for i = 1:length(cId)
+
+    ISIcolor(i) = clusterColors(cId(i));
+end
+
+n_pixels = 5;
+ISIcolor = cell2mat(ISIcolor);
+ISIcolor = reshape(ISIcolor, [3, 607]).*255;
+ISIr = repmat(ISIcolor(1,:),n_pixels,1);
+ISIg = repmat(ISIcolor(2,:),n_pixels,1);
+ISIb = repmat(ISIcolor(3,:),5,1);
+ISIcolorrgb(:,:,1) = ISIr;
+ISIcolorrgb(:,:,2) = ISIg;
+ISIcolorrgb(:,:,3) = ISIb;
+ISIcolorrgb = uint8(ISIcolorrgb);
+%
+ISIcolorrgb = uint8(ISIcolorrgb);
+figure
+imshow(ISIcolorrgb)
 %% ISI by cluster peaks Fig 5B
 clear ISIcolor
 clear sortedISI
@@ -53,56 +162,6 @@ for clusterID = [1 6 8 2 7 3 9 5 4]
 end
 figure
 imagesc(sortedISI)
-
-%% Rug plot by cluster Fig 5B
-for i = 1:length(cId)
-
-    ISIcolor(i) = clusterColors(cId(i));
-end
-
-n_pixels = 5;
-ISIcolor = cell2mat(ISIcolor);
-ISIcolor = reshape(ISIcolor, [3, 607]).*255;
-ISIr = repmat(ISIcolor(1,:),n_pixels,1);
-ISIg = repmat(ISIcolor(2,:),n_pixels,1);
-ISIb = repmat(ISIcolor(3,:),5,1);
-ISIcolorrgb(:,:,1) = ISIr;
-ISIcolorrgb(:,:,2) = ISIg;
-ISIcolorrgb(:,:,3) = ISIb;
-ISIcolorrgb = uint8(ISIcolorrgb);
-%
-ISIcolorrgb = uint8(ISIcolorrgb);
-figure
-imshow(ISIcolorrgb)
-
-%% PC shapes Fig 5C
-figure;
-cnt = 1;
-eV = [];
-eVe = [];
-
-for clusterID = [1:9]
-    eV(cnt,:) = nanmean(e(cId==clusterID,:));
-    eVe(cnt,:) = nanstd(e(cId==clusterID,:))./sqrt(sum(cId==clusterID));
-    cnt = cnt + 1;
-end
-plot(S(:,1:4))
-hold on
-plot(S(:,1)-S(:,3),'k', 'LineWidth', 1)
-%% Figure 5D
-figure
-pc_a = 1;
-pc_b = 2;
-cnt = 1;
-for clusterID=1:9
-    c = clusterID;
-    errorbar(eV(clusterID,pc_a),eV(clusterID,pc_b),eVe(clusterID,pc_b),eVe(clusterID,pc_b),eVe(clusterID,pc_a),eVe(clusterID,pc_a),'o','color',colors{clusterID})
-    hold on;
-end
-xlabel(sprintf('PC %d',pc_a))
-ylabel(sprintf('PC %d',pc_b))
-
-
 %% Shuffle test for ISI and Orientation
 SNR = clusterFnData(:,33);
 PC1 = clusterFnData(:,32);
@@ -130,7 +189,7 @@ end
 
 boundsL = median(prctile(allL, [2.5,97.5])');
 boundsO = median(prctile(allO, [2.5,97.5])');
-%% Initialize layer vs orientation idx vs PC
+%% Fig6 layer vs orientation idx vs PC
 %clusterFnData = readmatrix('/cluster_data_chand.csv');
 % 15 cluster
 % 21 Depth ID
@@ -166,6 +225,19 @@ end
 figure;
 imagesc(M);
 colorbar
+%% Loadings vs orientation idx Fig 5F
+kurtFn = clusterFnData(:,23);
+orientationIdxFn = clusterFnData(:,5);
+figure
+for clusterID = 1:9
+    errorbar(LperCluster(clusterID),OIperCluster(clusterID),OIperCluster_err(clusterID),OIperCluster_err(clusterID),LperCluster_err(clusterID),LperCluster_err(clusterID),'o','color',colors{clusterID})
+    hold on
+    xline([boundsL],'--')
+    hold on
+    yline([boundsO],'--')
+end
+ylabel('orientation Idx')
+xlabel('PC1-PC3')
 
 %% Depths and Loadings and orientation idx Fig 5E
 clusterFn = clusterFnData(:,15);
@@ -215,19 +287,6 @@ title('PC1-PC3 Loadings')
 ylabel('Distance from Layer 4 (um)')
 xlabel('Cluster')
 legend('OI')
-%% Loadings vs orientation idx Fig 5F
-kurtFn = clusterFnData(:,23);
-orientationIdxFn = clusterFnData(:,5);
-figure
-for clusterID = 1:9
-    errorbar(LperCluster(clusterID),OIperCluster(clusterID),OIperCluster_err(clusterID),OIperCluster_err(clusterID),LperCluster_err(clusterID),LperCluster_err(clusterID),'o','color',colors{clusterID})
-    hold on
-    xline([boundsL],'--')
-    hold on
-    yline([boundsO],'--')
-end
-ylabel('orientation Idx')
-xlabel('PC1-PC3')
 
 %% Stats for loadings and orientation Fig 5F
 
@@ -239,3 +298,35 @@ PC3 = clusterFnData(:,30);
 loadingsPCsFn = PC1-PC3;
 
 [rho,pval] = partialcorr(loadingsPCsFn,orientationIdxFn,SNR)
+%%
+anova1(PC3, clusterFn)
+%old stats
+clusterID = [4]
+G = PC1 - PC3;
+[h,p,ci,st] = ttest2(orientationIdxFn(ismember(clusterFn,clusterID)),...
+    orientationIdxFn(ismember(clusterFn,setdiff(1:9,clusterID))))
+[h,p,ci,st] = ttest2(G(ismember(clusterFn,clusterID)),...
+    G(ismember(clusterFn,setdiff(1:9,clusterID))))
+%[p] = ranksum(G(ismember(clusterFn,clusterID)),...
+%    G(ismember(clusterFn,setdiff(1:9,clusterID))))
+%%
+
+distV = e(:,1:3) - repmat(nanmean(e(:,1:3)),[size(e,1), 1]);
+sqrt(sum(distV.^2,2))
+hist(sqrt(sum(distV.^2,2)))
+X = sqrt(sum(distV.^2,2));
+anova1(X, clusterFn)
+[p,table,stats] = kruskalwallis(X, clusterFn)
+%%  ISI cdf based on kurtosis
+figure
+cdfplot(bigK(ismember(bigK(:,3), [4]),1))
+hold on
+cdfplot(bigK(ismember(bigK(:,3), [3 5 9]),1))
+hold on
+cdfplot(bigK(ismember(bigK(:,3), [7]),1))
+hold on
+cdfplot(bigK(ismember(bigK(:,3), [1 2]),1))
+hold on
+cdfplot(bigK(ismember(bigK(:,3), [6 8]),1))
+hold on
+legend('4','3 5 9','7','1 2','6 8')

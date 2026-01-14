@@ -90,22 +90,27 @@ xlabel('Time (ms)')
 %% Figure 6A
 
 for clusterID=1
-    for sessionID = 2
+    for sessionID = 1
         
-        unitID = 3;
+        unitID = 4;
         figure
         uId = allWaveforms(sessionID).clusters(clusterID).ID(unitID)+1;
         depth = allWaveforms(sessionID).clusters(clusterID).depth_scaled(unitID);
         trajectory = allWaveforms(sessionID).trajectory;
-        numChannels = size(trajectory,1);
+        numChannels = size(trajectory,1); % This is 21 channels (+10 -10 channels)
         
         if sessionID == 4 || sessionID == 5
-            currSpread = flipud(squeeze(trajectory(1:2:numChannels,:,uId)));
+            currSpread = flipud(squeeze(trajectory(1:2:numChannels,:,uId))); 
         else
             currSpread = squeeze(trajectory(1:2:numChannels,:,uId));
         end
+        %curr spread is 11 channels, every other channel extracted to be
+        %true to linear column
         
-        distFromSoma = [-0.1:0.02:0.1];
+%        [Mmin Imin] = min(currSpread')
+%        [Mmax Imax] = max(currSpread')
+        
+        distFromSoma = [-0.1:0.02:0.1]; % channel spacing is 20 um
         time = linspace(0,82/30000*1000,82);
         colormap turbo
         subplot(2,1,1)
@@ -146,6 +151,7 @@ inverseSlopeTrough_above = [];
 allBootstrappedTrough_above = [];
 allBootstrappedTrough_below = [];
 nboot = 500;
+clear X2
 for clusterID=1:max(cluster)
     troughTime = [];
     errorTraj = [];
@@ -263,7 +269,8 @@ end
 title('Time of Waveform Trough per electrode channel')
 
 
-%% Figure 5D Trough above vs trough below
+
+%% Figure 6D Trough above vs trough below
 figure
 for clusterID = setdiff(1:9,[])
     
@@ -286,7 +293,9 @@ ylabel('Slope of Trough Propagation Velocity towards Pia (mm/ms)')
 xlabel('Slope of Trough Propagation Velocity away from Pia (mm/ms)')
 
 
-%% Asymmetry Index Fig 5E
+
+
+%% Asymmetry Index Fig 6E
 a = 1;
 b = 1;
 c = 0;
@@ -307,12 +316,16 @@ peakErr = squeeze(nanstd(allBootstrappedTrough_above(:,:,1),[],2));
 SI = abs(a.*x0+b.*y0+c)./sqrt(a.^2+b.^2);
 SI_err = abs(a*troughErr+b*peakErr+c)/sqrt(a^2+b^2);
 
+
 figure
 cnt = 0;
 
 for clusterID = [1 6 8 2 7 3 9 5 4]
     cnt = cnt+1;
+    %SI_err = prctile(SIBoot(clusterID,:), [5, 95]);
     errorbar(cnt,SI(clusterID),SI_err(clusterID),SI_err(clusterID),'o','color',colors{clusterID})
+    %errorbar(cnt,SI(clusterID),SI_err(1),SI_err(2),'o','color',colors{clusterID})
+    
     hold on
 end
 xlim([0 10])
@@ -348,21 +361,21 @@ for clu1 = [1 6 8 2 7 3 9 5 4]
 
 
 cnt = cnt +1;
-sample1 = [SIBoot(clu1,:)];
-sample2 = [SIBoot(clu2,:)];
+sample1 = [SIBoot(clu1,:)]; %bootstrapped asymmetry indices for current cluster 1
+sample2 = [SIBoot(clu2,:)];%bootstrapped asymmetry indices for current cluster 2
 
 % figure;
 % histfit(sample1);
 % hold on
 % histfit(sample2);
 
-    boot_diffs = sample1 - sample2;
+    boot_diffs = sample1 - sample2; 
     ci_ind = prctile(boot_diffs, [1, 99]);
      ci_ind_low(clu1,clu2) = ci_ind(1);
      ci_ind_upp(clu1,clu2) = ci_ind(2);
     
     if ci_ind_low(clu1,clu2) <= 0 && ci_ind_upp(clu1,clu2) >= 0
-        significant(cnt2, cnt) = 0;
+        significant(cnt2, cnt) = 0; % If CI contains a 0, not significant because there is no difference
     else
         significant(cnt2, cnt) = 1;
     end
@@ -372,11 +385,13 @@ sample2 = [SIBoot(clu2,:)];
 end
 figure
 imagesc(significant)
-colormap hot
+colormap cool
 axis equal
 colorbar
 
-%%  Fig 5F
+% Count how many bootstrap asymmetry indices cross zero
+p_value = 2 * min(sum(ci_ind >= 0), sum(ci_ind <= 0)) / nboot
+%%  Fig 6F
 figure
 cnt = 0;
 
@@ -391,14 +406,14 @@ for clusterID = [1 6 8 2 7 3 9 5 4]
 end
 xlim([0 10])
 
-%% stats for Fig 5F
+%% stats for Fig 6F
 
 for clusterID = 1:9
 BootstrappedTrough = allBootstrappedTrough_below(clusterID,:,1);
-CI(clusterID,:) = prctile(BootstrappedTrough,[5 95])
-%figure
-%histfit(BootstrappedTrough);
+CI(clusterID,:) = prctile(BootstrappedTrough,[2.5 97.5]);
+% figure
+% histfit(BootstrappedTrough);
 end
-
-
+% significant if 0 not included between bounds
+CI
 
