@@ -3,7 +3,7 @@
 Extends the WaveMAP cell-type clustering of Carr et al. 2025, *"High-resolution
 laminar recordings reveal structure–function relationships in monkey V1"*
 (bioRxiv 2025.05.14.653875 / PNAS), by adding each neuron's laminar position
-(and, optionally, a NuCLR embedding) as clustering features.
+as a clustering feature.
 
 ## Setup
 
