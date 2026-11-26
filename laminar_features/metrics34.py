@@ -17,6 +17,34 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 from sklearn.metrics import adjusted_rand_score
 
+from common import cluster_to_k
+
+METRIC_KEYS = ("stab", "stab_err", "wspread", "dspread", "didiff")
+
+
+def paper_reference(df, wf):
+    """Waveform spread, depth spread and DI differentiation of the published
+    K=9 labels on the same neurons (the dashed reference lines)."""
+    pub = df["cluster 1.0"].astype(int).values
+    return {"wspread": waveform_spread(wf, pub),
+            "dspread": depth_spread(df["depth_scaled"].values, pub),
+            "didiff": di_differentiation(df["DI"].values, pub)}
+
+
+def clustering_metrics(df, wf, labels, subs, K):
+    """All quality metrics for one full-data clustering `labels` (forced to K).
+
+    `subs` is the list of (idx, graph, scan) subsample graphs from
+    run_figures34.build_graphs; each is re-clustered to K for the stability score.
+    Returns {key: value} for every key in METRIC_KEYS."""
+    runs = [(idx, cluster_to_k(g, sc, K, prefer=1.0)[0]) for idx, g, sc in subs]
+    s, se = overlap_stability(runs)
+    return {"stab": s, "stab_err": se,
+            "wspread": waveform_spread(wf, labels),
+            "dspread": depth_spread(df["depth_scaled"].values, labels),
+            "didiff": di_differentiation(df["DI"].values, labels)}
+
+
 def overlap_stability(runs):
     """Mean +/- std pairwise adjusted Rand index across subsample re-clusterings.
 

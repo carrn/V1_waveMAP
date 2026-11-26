@@ -17,11 +17,9 @@ import numpy as np
 
 import run_figures34 as R
 import metrics34 as M
-from common import seed_everything, run_umap, scan_resolutions, cluster_to_k
+from common import seed_everything, run_umap, scan_resolutions, cluster_to_k, WEIGHTS, KS
 import matplotlib.pyplot as plt
 
-WEIGHTS = [0, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, float("inf")]
-KS = [3, 5, 7, 9]
 N_NULL = 300
 
 # held-out functional variables (NOT used for clustering); (column, transform)

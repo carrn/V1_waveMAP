@@ -32,6 +32,11 @@ N_NEIGHBORS = 20
 MIN_DIST = 0.2
 RESOLUTION = 1.0
 
+# Laminar-extension sweep: laminar-feature weights lambda (0 = waveform only,
+# inf = position only) and forced cluster counts K.
+WEIGHTS = [0, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, float("inf")]
+KS = [3, 5, 7, 9]
+
 # 9-cluster palette used for Figure 2 (res1_0 in the notebook).
 # Cool colors = narrow-spiking, warm = broad-spiking, green = tri-phasic.
 CUSTOM_PAL = ['#054b7d', '#416EB6', '#fe7f2d', '#9d0208', '#f0cb67',

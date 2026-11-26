@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 
 from common import (seed_everything, waveforms_by_key, run_umap, scan_resolutions,
                     cluster_to_k, classify_shape, CUSTOM_PAL, ORDER_PUB, NAMES_PUB,
-                    LAYER_TOP, LAYER_BOTTOM)
+                    LAYER_TOP, LAYER_BOTTOM, WEIGHTS, KS)
 from fig34 import make_figure3, make_figure4
 import metrics34 as M
 
@@ -127,9 +127,8 @@ def wtext(w):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--weights", nargs="+",
-                    default=["0", "0.125", "0.25", "0.5", "1", "2", "4", "8", "16", "inf"])
-    ap.add_argument("--ks", type=int, nargs="+", default=[3, 5, 7, 9])
+    ap.add_argument("--weights", type=float, nargs="+", default=WEIGHTS)
+    ap.add_argument("--ks", type=int, nargs="+", default=KS)
     args = ap.parse_args()
     weights = [float(w) for w in args.weights]
     Ks = args.ks
@@ -140,9 +139,7 @@ def main():
 
     # paper-clustering reference (published 9 labels on the same 606)
     pub = df["cluster 1.0"].astype(int).values
-    paper_ref = {"wspread": M.waveform_spread(wf, pub),
-                 "dspread": M.depth_spread(df["depth_scaled"].values, pub),
-                 "didiff": M.di_differentiation(df["DI"].values, pub)}
+    paper_ref = M.paper_reference(df, wf)
 
     # ---- precompute UMAP graphs + scans once per weight (reused across all K) ----
     graphs = {}
@@ -166,7 +163,7 @@ def main():
     kgroups = []     # (K, metrics_img, [(weight_title, subtitle, f3, f4), ...])
     metrics_by_K = {}
     for K in Ks:
-        met = {k: [] for k in ("stab", "stab_err", "wspread", "dspread", "didiff")}
+        met = {k: [] for k in M.METRIC_KEYS}
         wsections = []
         for w in weights:
             full, full_scan, subs = graphs[w]
@@ -175,13 +172,10 @@ def main():
             ncat = {g: sum(v == g for v in cats.values()) for g in CAT_GROUPS}
             comp = f"{ncat['NS']} NS, {ncat['TP']} TP, {ncat['BS']} BS"
 
-            # stability: re-cluster each cached subsample graph to K
-            runs = [(idx, cluster_to_k(g, sc, K, prefer=1.0)[0]) for idx, g, sc in subs]
-            s, se = M.overlap_stability(runs)
-            met["stab"].append(s); met["stab_err"].append(se)
-            met["wspread"].append(M.waveform_spread(wf, lab))
-            met["dspread"].append(M.depth_spread(df["depth_scaled"].values, lab))
-            met["didiff"].append(M.di_differentiation(df["DI"].values, lab))
+            vals = M.clustering_metrics(df, wf, lab, subs, K)
+            for k in M.METRIC_KEYS:
+                met[k].append(vals[k])
+            s = vals["stab"]
 
             dfx = df.copy(); dfx["clab"] = lab
             tag = ("waveform only" if w == 0 else

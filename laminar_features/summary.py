@@ -19,7 +19,8 @@ import numpy as np
 
 import run_figures34 as R
 import metrics34 as M
-from common import cluster_to_k, seed_everything, run_umap, scan_resolutions
+from common import (cluster_to_k, seed_everything, run_umap, scan_resolutions,
+                    WEIGHTS, KS)
 
 CACHE = os.path.join(R.OUT, "metrics_data.json")
 N_SHUFFLE = 20
@@ -36,25 +37,19 @@ def compute_curves(df, wf, pos, weights, Ks):
             return {int(k): v for k, v in d["metrics_by_K"].items()}, d["paper_ref"]
 
     print("computing curve metrics (no figures rendered)...")
-    pub = df["cluster 1.0"].astype(int).values
-    paper_ref = {"wspread": M.waveform_spread(wf, pub),
-                 "dspread": M.depth_spread(df["depth_scaled"].values, pub),
-                 "didiff": M.di_differentiation(df["DI"].values, pub)}
+    paper_ref = M.paper_reference(df, wf)
     graphs = {w: R.build_graphs(R.features(wf, pos, w)) for w in weights}
     for w in weights:
         print(f"  graphs ready λ={R.wtext(w)}")
     metrics_by_K = {}
     for K in Ks:
-        met = {k: [] for k in ("stab", "stab_err", "wspread", "dspread", "didiff")}
+        met = {k: [] for k in M.METRIC_KEYS}
         for w in weights:
             full, full_scan, subs = graphs[w]
             lab, _ = cluster_to_k(full, full_scan, K, prefer=1.0)
-            runs = [(idx, cluster_to_k(g, sc, K, prefer=1.0)[0]) for idx, g, sc in subs]
-            s, se = M.overlap_stability(runs)
-            met["stab"].append(s); met["stab_err"].append(se)
-            met["wspread"].append(M.waveform_spread(wf, lab))
-            met["dspread"].append(M.depth_spread(df["depth_scaled"].values, lab))
-            met["didiff"].append(M.di_differentiation(df["DI"].values, lab))
+            vals = M.clustering_metrics(df, wf, lab, subs, K)
+            for k in M.METRIC_KEYS:
+                met[k].append(vals[k])
         metrics_by_K[K] = met
         print(f"  K={K} done")
     with open(CACHE, "w") as f:
@@ -93,8 +88,7 @@ def random_baseline(df, wf, Ks):
 def main():
     df, wf = R.load_table()
     pos = R.laminar_position(df["depth_scaled"].values)
-    weights = [0, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, float("inf")]
-    Ks = [3, 5, 7, 9]
+    weights, Ks = WEIGHTS, KS
 
     metrics_by_K, paper_ref = compute_curves(df, wf, pos, weights, Ks)
     print("computing random-assignment baseline (shuffled λ=0 labels)...")
