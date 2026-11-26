@@ -19,7 +19,6 @@ table is `2-WaveMAPPrcoessingFigures2-3/clusterFnData042925.mat`.
 
 ```bash
 uv run python figure2.py      # -> output/figure2.png
-uv run python extension.py    # -> output/figure2_extension.png
 ```
 
 ## Files
@@ -29,7 +28,6 @@ uv run python extension.py    # -> output/figure2_extension.png
 | `common.py`    | data loading, UMAP, Louvain wrappers, constants |
 | `louvain.py`   | the authors' pure-Python Louvain (`best_partition`), extracted verbatim from `WaveMAP_analysisV1.ipynb` |
 | `figure2.py`   | Figure 2 panels A–D |
-| `extension.py` | laminar-position extension (606 neurons) |
 
 ## Pipeline (faithful to the authors' notebook)
 
@@ -58,9 +56,10 @@ assignments themselves reproduce exactly.
 
 ## Extension — laminar position as a new feature
 
-`extension.py` adds the neuron's **laminar position** as an extra WaveMAP input
-feature and re-clusters the **same 606 neurons** the paper used (visually
-responsive, with valid laminar depth).
+The extension adds the neuron's **laminar position** as an extra WaveMAP input
+feature, weighted by `λ`, and re-clusters the **same 606 neurons** the paper used
+(visually responsive, with valid laminar depth). See `run_figures34.py` and
+`functional_quality.py` below.
 
 Laminar position is a normalized cortical-depth coordinate in `[-1, +1]`:
 `-1` = topmost of layer 1 (pia), `+1` = bottommost of layer 6 (white matter):
@@ -71,14 +70,7 @@ position = clip( 1 - 2*(depth - BOTTOM)/(TOP - BOTTOM), -1, 1 )
 
 using the anatomical extents from the authors' code (`TOP=1039.4 um`,
 `BOTTOM=-990 um`, depths in microns relative to layer 4). Feature vector =
-`[52 waveform samples, w * position]`.
-
-**Result.** Adding laminar position reorganizes the candidate cell types so that
-clusters become progressively more laminarly homogeneous. Within-cluster laminar
-position std falls from **0.325** (waveform-only baseline) to **0.212** at `w=1`
-and down to **0.064** at `w=12`, while the partition diverges from the
-shape-only baseline (ARI 0.48 → 0.12). The extended UMAP shows a clear top→bottom
-depth gradient that is absent when clustering on waveform shape alone.
+`[52 waveform samples, λ * position]`.
 
 ## Figures 3 & 4 (paper + extension, in one HTML page)
 
