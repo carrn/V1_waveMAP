@@ -20,7 +20,7 @@ import numpy as np
 import run_figures34 as R
 import metrics34 as M
 from common import (cluster_to_k, seed_everything, run_umap, scan_resolutions,
-                    WEIGHTS, KS)
+                    WEIGHTS, KS, RAND_STATE)
 
 CACHE = os.path.join(R.OUT, "metrics_data.json")
 N_SHUFFLE = 20
@@ -62,8 +62,8 @@ def random_baseline(df, wf, Ks):
     """Shuffle the lambda=0 labels (preserving cluster sizes) and recompute metrics."""
     depth = df["depth_scaled"].values
     DI = df["DI"].values
-    seed_everything(R.UMAP_SEED)                       # lambda=0 graph (waveform only)
-    _, full = run_umap(wf, seed=R.UMAP_SEED)
+    seed_everything(RAND_STATE)                        # lambda=0 graph (waveform only)
+    _, full = run_umap(wf, seed=RAND_STATE)
     scan = scan_resolutions(full)
     base = {}
     for K in Ks:

@@ -1,9 +1,10 @@
 """
 Cluster-quality metrics as a function of the laminar-feature weight lambda
-(the extension's free parameter).  All metrics use the K=9 forced clusterings.
+(the extension's free parameter), computed for each forced cluster count K.
 
-  - stability        : mean pairwise adjusted Rand index across UMAP re-seeds
-                       (how reproducible the 9-cluster solution is).
+  - stability        : mean pairwise adjusted Rand index across re-clusterings of
+                       random 85%-neuron subsamples (how reproducible the
+                       K-cluster solution is).
   - waveform spread  : within-cluster RMS distance to the cluster-mean waveform,
                        in the 52-d waveform space (shape coherence; lower = tighter).
   - depth spread     : mean within-cluster std of laminar depth (laminar coherence).
@@ -96,7 +97,7 @@ def di_differentiation(di, labels):
 def _log_positions(weights):
     """x positions for a log axis: λ=0 -> half the smallest positive weight
     (i.e. 0.0625 when the smallest is 0.125); λ=∞ -> twice the largest finite."""
-    finite_pos = [w for w in weights if np.isfinite(w) and w > 0]
+    finite_pos = [w for w in weights if np.isfinite(w) and w > 0] or [1.0]
     pseudo_zero = min(finite_pos) / 2.0
     inf_pos = max(finite_pos) * 2.0
 
@@ -181,20 +182,18 @@ def plot_metrics(weights, stab, stab_err, wspread, dspread, didiff,
     """paper_ref: optional dict with keys 'wspread','dspread','didiff' for the
     published-clustering reference lines."""
     fig, axes = plt.subplots(2, 2, figsize=(11, 8))
-    # map weights (which may include inf) to x positions on a symlog axis;
-    # inf (position-only) is placed just past the largest finite weight.
-    finite = [w for w in weights if np.isfinite(w)]
-    inf_x = max(finite) * 2 if finite else 1.0
-    x = np.array([w if np.isfinite(w) else inf_x for w in weights], float)
-    xtl = [("∞" if not np.isfinite(w) else f"{w:g}") for w in weights]
+    # same log λ-axis as plot_metrics_overlay (λ=0 and λ=∞ at fixed slots)
+    x, xtl, pz, infp = _log_positions(weights)
 
     def style(ax, ylabel, title):
         ax.set_xlabel("laminar-feature weight  λ", fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
         ax.set_title(title, fontsize=11, fontweight="bold", loc="left")
-        ax.set_xscale("symlog", linthresh=0.1)
+        ax.set_xscale("log")
         ax.set_xticks(x)
         ax.set_xticklabels(xtl, fontsize=8)
+        ax.xaxis.set_minor_locator(plt.NullLocator())
+        ax.set_xlim(pz / 1.6, infp * 1.6)
         for sp in ("top", "right"):
             ax.spines[sp].set_visible(False)
 

@@ -60,7 +60,6 @@ NAMES_PUB = {0: "NS1", 5: "NS2", 7: "NS3", 1: "NS4", 6: "TP-1",
 # Display order top -> bottom and the depth-axis boundaries (microns from L4).
 LAYER_BIN_NAMES = {4: "L2/3", 3: "L4A/B", 2: "L4C", 1: "L5/6"}
 LAYER_BIN_ORDER = [4, 3, 2, 1]                      # top -> bottom
-LAYER_EDGES = [1039.4, 588.8, 285.4, 0.0, -488.0, -990.0]  # L1 top .. L6 bottom
 LAYER_CENTERS = {  # for placing layer labels on a depth axis
     "L1": 814.1, "L2/3": 437.1, "L4A/B": 142.7, "L4C": -244.0, "L5/6": -739.0}
 
@@ -69,11 +68,6 @@ def waveforms_by_key():
     """Return a dict (session, unit_id) -> normalized waveform for all 801 units."""
     d = load_neg_waveforms()
     return {(s, i): w for s, i, w in zip(d["session"], d["unit_id"], d["waveforms"])}
-
-
-# Per-neuron cell-type category implied by the published cluster (for reference).
-PAPER_CATEGORY = {0: "NS", 1: "NS", 5: "NS", 7: "NS", 6: "TP",
-                  2: "BS", 3: "BS", 4: "BS", 8: "BS"}
 
 
 def classify_shape(mean_wave):

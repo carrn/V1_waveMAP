@@ -1,7 +1,9 @@
 """Generate a standalone explainer HTML for the held-out functional-differentiation
 metric: reasoning + math + relation to the paper + results. Self-contained (the
-figure is base64-embedded). Run: uv run python write_explainer.py"""
+figure is base64-embedded). Reads output/functional_quality.json, so run
+functional_quality.py first. Run: uv run python write_explainer.py"""
 import os
+import json
 import base64
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
@@ -9,17 +11,18 @@ IMG = os.path.join(OUT, "functional_quality.png")
 IMG2 = os.path.join(OUT, "functional_per_variable.png")
 
 # functional-differentiation z-scores from functional_quality.py
-LAM = ["0", "0.125", "0.25", "0.5", "1", "2", "4", "8", "16", "∞"]
-Z = {
-    3: [10.65, 13.82, 15.60, 17.46, 12.69, 20.31, 18.82, 19.55, 13.79, 15.63],
-    5: [10.74, 11.37, 13.04, 13.57, 25.34, 25.27, 26.90, 19.69, 25.32, 19.64],
-    7: [11.85, 10.80, 11.04, 14.44, 23.20, 23.67, 20.48, 18.14, 21.76, 19.55],
-    9: [11.63, 11.45, 9.62, 11.26, 21.31, 21.80, 24.43, 17.51, 21.24, 17.97],
-}
-Z_PUBLISHED = 10.75
+ZJSON = os.path.join(OUT, "functional_quality.json")   # written by functional_quality.py
 
 
-def table_html():
+def load_z():
+    """(lambda column labels, {K: [z per lambda]}, published-labels z)."""
+    with open(ZJSON) as f:
+        d = json.load(f)
+    lam = ["∞" if w == "inf" else f"{w:g}" for w in d["weights"]]
+    return lam, {int(K): v for K, v in d["z_by_K"].items()}, d["z_published"]
+
+
+def table_html(LAM, Z):
     head = "<tr><th>K \\ λ</th>" + "".join(f"<th>{l}</th>" for l in LAM) + "</tr>"
     rows = []
     for K, vals in Z.items():
@@ -161,8 +164,8 @@ label shuffles.</div>
   per variable.</li>
   <li><b>Null:</b> B = 300 label permutations preserving cluster sizes; the same
   permutation is applied to all variables within a draw.</li>
-  <li><b>Reported:</b> the z-score above, per (K, λ); plus per-variable η² for two
-  reference solutions (shape-only K=9 vs position-only K=9).</li>
+  <li><b>Reported:</b> the z-score above, per (K, λ); plus per-variable η² for three
+  K=9 reference solutions (shape-only λ=0, the peak λ=4, position-only λ=∞).</li>
 </ul>
 
 <h2>5. How this relates to the paper</h2>
@@ -244,10 +247,11 @@ bioRxiv 2025.05.14.653875 / PNAS.</p>
 
 
 def main():
+    LAM, Z, Z_PUBLISHED = load_z()
     html = (TEMPLATE
             .replace("__IMG2__", img_uri(IMG2))   # before __IMG__ (substring)
             .replace("__IMG__", img_uri(IMG))
-            .replace("__TABLE__", table_html())
+            .replace("__TABLE__", table_html(LAM, Z))
             .replace("__ZPUB__", f"{Z_PUBLISHED:.1f}"))
     out = os.path.join(OUT, "functional_differentiation.html")
     with open(out, "w") as f:

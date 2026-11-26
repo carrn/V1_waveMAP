@@ -32,11 +32,10 @@ import matplotlib.pyplot as plt
 
 from common import (seed_everything, waveforms_by_key, run_umap, scan_resolutions,
                     cluster_to_k, classify_shape, CUSTOM_PAL, ORDER_PUB, NAMES_PUB,
-                    LAYER_TOP, LAYER_BOTTOM, WEIGHTS, KS)
+                    LAYER_TOP, LAYER_BOTTOM, WEIGHTS, KS, RAND_STATE)
 from fig34 import make_figure3, make_figure4
 import metrics34 as M
 
-UMAP_SEED = 50
 N_SUBSAMPLE = 8
 SUBSAMPLE_FRAC = 0.85
 
@@ -77,16 +76,16 @@ def features(wf, pos, weight):
 def build_graphs(feat):
     """UMAP fuzzy graph + resolution scan for the full data and for each
     subsample (computed ONCE per weight, reused across all K)."""
-    seed_everything(UMAP_SEED)
-    _, full = run_umap(feat, seed=UMAP_SEED)
+    seed_everything(RAND_STATE)
+    _, full = run_umap(feat, seed=RAND_STATE)
     full_scan = scan_resolutions(full)
     subs = []
     n = feat.shape[0]
     for r in range(N_SUBSAMPLE):
         rng = np.random.default_rng(1000 + r)
         idx = np.sort(rng.choice(n, size=int(SUBSAMPLE_FRAC * n), replace=False))
-        seed_everything(UMAP_SEED)
-        _, g = run_umap(feat[idx], seed=UMAP_SEED)
+        seed_everything(RAND_STATE)
+        _, g = run_umap(feat[idx], seed=RAND_STATE)
         subs.append((idx, g, scan_resolutions(g)))
     return full, full_scan, subs
 

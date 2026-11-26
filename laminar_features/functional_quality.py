@@ -13,11 +13,12 @@ lambda), this can peak at the genuinely good solutions.
 Run:  uv run python functional_quality.py
 """
 import os
+import json
 import numpy as np
 
 import run_figures34 as R
 import metrics34 as M
-from common import seed_everything, run_umap, scan_resolutions, cluster_to_k, WEIGHTS, KS
+from common import seed_everything, run_umap, scan_resolutions, cluster_to_k, WEIGHTS, KS, RAND_STATE
 import matplotlib.pyplot as plt
 
 N_NULL = 300
@@ -79,8 +80,8 @@ def main():
     # full-data graphs only (cheap; no subsampling needed for this metric)
     graphs = {}
     for w in WEIGHTS:
-        seed_everything(R.UMAP_SEED)
-        _, g = run_umap(R.features(wf, pos, w), seed=R.UMAP_SEED)
+        seed_everything(RAND_STATE)
+        _, g = run_umap(R.features(wf, pos, w), seed=RAND_STATE)
         graphs[w] = (g, scan_resolutions(g))
         print(f"  graph ready λ={R.wtext(w)}")
 
@@ -98,8 +99,16 @@ def main():
 
     # paper published labels (K=9) as a reference z
     pub = df["cluster 1.0"].astype(int).values
-    z_pub, obs_pub = func_z(varmat, pub, rng)
+    z_pub, _ = func_z(varmat, pub, rng)
     print(f"  published K=9 labels: functional-z={z_pub:.2f}")
+
+    # z-scores for write_explainer.py
+    zjson = os.path.join(R.OUT, "functional_quality.json")
+    with open(zjson, "w") as f:
+        json.dump({"weights": [("inf" if not np.isfinite(w) else w) for w in WEIGHTS],
+                   "z_by_K": {str(K): [float(z) for z in Z[K]] for K in KS},
+                   "z_published": float(z_pub)}, f, indent=1)
+    print(f"saved {zjson}")
 
     # ---------- plot ----------
     X, xtl, pz, infp = M._log_positions(WEIGHTS)

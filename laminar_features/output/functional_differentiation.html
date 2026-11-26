@@ -123,8 +123,8 @@ label shuffles.</div>
   per variable.</li>
   <li><b>Null:</b> B = 300 label permutations preserving cluster sizes; the same
   permutation is applied to all variables within a draw.</li>
-  <li><b>Reported:</b> the z-score above, per (K, λ); plus per-variable η² for two
-  reference solutions (shape-only K=9 vs position-only K=9).</li>
+  <li><b>Reported:</b> the z-score above, per (K, λ); plus per-variable η² for three
+  K=9 reference solutions (shape-only λ=0, the peak λ=4, position-only λ=∞).</li>
 </ul>
 
 <h2>5. How this relates to the paper</h2>
@@ -158,8 +158,8 @@ is the per-variable breakdown of the aggregate z on the left.</figcaption></figu
 
 <p>z-score by cluster count K (rows) and laminar weight λ (columns); the largest value
 in each row is highlighted:</p>
-<table class="z"><tr><th>K \ λ</th><th>0</th><th>0.125</th><th>0.25</th><th>0.5</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>∞</th></tr><tr><th>3</th><td>10.7</td><td>13.8</td><td>15.6</td><td>17.5</td><td>12.7</td><td class="hi">20.3</td><td>18.8</td><td>19.6</td><td>13.8</td><td>15.6</td></tr><tr><th>5</th><td>10.7</td><td>11.4</td><td>13.0</td><td>13.6</td><td>25.3</td><td>25.3</td><td class="hi">26.9</td><td>19.7</td><td>25.3</td><td>19.6</td></tr><tr><th>7</th><td>11.8</td><td>10.8</td><td>11.0</td><td>14.4</td><td>23.2</td><td class="hi">23.7</td><td>20.5</td><td>18.1</td><td>21.8</td><td>19.6</td></tr><tr><th>9</th><td>11.6</td><td>11.4</td><td>9.6</td><td>11.3</td><td>21.3</td><td>21.8</td><td class="hi">24.4</td><td>17.5</td><td>21.2</td><td>18.0</td></tr></table>
-<p class="small">Published K=9 labels (clustered on all 801 units): z = 10.8.</p>
+<table class="z"><tr><th>K \ λ</th><th>0</th><th>0.125</th><th>0.25</th><th>0.5</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>∞</th></tr><tr><th>3</th><td>10.6</td><td>13.8</td><td>15.6</td><td>17.5</td><td>12.7</td><td class="hi">20.3</td><td>18.8</td><td>19.6</td><td>13.8</td><td>15.6</td></tr><tr><th>5</th><td>10.7</td><td>11.4</td><td>13.0</td><td>13.6</td><td>25.3</td><td>25.3</td><td class="hi">26.9</td><td>19.7</td><td>25.3</td><td>19.6</td></tr><tr><th>7</th><td>11.8</td><td>10.8</td><td>11.0</td><td>14.4</td><td>23.2</td><td class="hi">23.7</td><td>20.5</td><td>18.1</td><td>21.8</td><td>19.6</td></tr><tr><th>9</th><td>11.6</td><td>11.4</td><td>9.6</td><td>11.3</td><td>21.3</td><td>21.8</td><td class="hi">24.4</td><td>17.5</td><td>21.2</td><td>18.0</td></tr></table>
+<p class="small">Published K=9 labels (clustered on all 801 units): z = 10.7.</p>
 
 <p><b>Reading it:</b></p>
 <ul>
