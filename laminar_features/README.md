@@ -1,58 +1,38 @@
-# Figure 2 reproduction + laminar-position extension
+# Laminar features for WaveMAP
 
-Reproduces **Figure 2** of Carr et al. 2025, *"High-resolution laminar recordings
-reveal structure–function relationships in monkey V1"* (bioRxiv 2025.05.14.653875 /
-PNAS) — *"UMAP and Louvain Clustering on 801 negative spiking waveforms reveals
-9 candidate cell types"* — and adds an extension feature type.
+Extends the WaveMAP cell-type clustering of Carr et al. 2025, *"High-resolution
+laminar recordings reveal structure–function relationships in monkey V1"*
+(bioRxiv 2025.05.14.653875 / PNAS), by adding each neuron's laminar position
+(and, optionally, a NuCLR embedding) as clustering features.
 
 ## Setup
 
 ```bash
-uv sync          # installs the pinned stack (umap-learn 0.5.3, networkx, xgboost, …)
+uv sync          # installs the pinned stack (umap-learn 0.5.3, networkx, …)
 ```
 
 No external download is needed: the waveforms ship inside the cloned repo at
-`1-PreWaveMAPProcessingFigure1/WaveMAP/` and the published per-neuron cluster
-table is `2-WaveMAPPrcoessingFigures2-3/clusterFnData042925.mat`.
+`1-PreWaveMAPProcessingFigure1/WaveMAP/` and the published per-neuron tables are
+`2-WaveMAPPrcoessingFigures2-3/clusterFnData042925.mat` and
+`3-GenerateFigures4-6/cluster_data_final.csv`.
 
-## Run
-
-```bash
-uv run python figure2.py      # -> output/figure2.png
-```
-
-## Files
+## Shared code
 
 | file | purpose |
 |------|---------|
-| `common.py`    | data loading, UMAP, Louvain wrappers, constants |
+| `common.py`    | data loading, UMAP, Louvain wrappers, forcing exactly K clusters, constants |
 | `louvain.py`   | the authors' pure-Python Louvain (`best_partition`), extracted verbatim from `WaveMAP_analysisV1.ipynb` |
-| `figure2.py`   | Figure 2 panels A–D |
 
-## Pipeline (faithful to the authors' notebook)
+## Base pipeline (faithful to the authors' notebook)
 
-- 801 normalized negative-spiking waveforms (sessions 1–5).
+- Normalized negative-spiking waveforms (sessions 1–5), restricted to the 606
+  visually-responsive neurons with valid laminar depth.
 - UMAP: `n_neighbors=20`, `min_dist=0.2`, `random_state=50`.
-- Louvain `best_partition` on the UMAP fuzzy graph, `resolution=1.0`.
+- Louvain `best_partition` on the UMAP fuzzy graph.
 
-### Reproduction fidelity
-
-Running the pipeline yields **exactly 9 clusters**. Mapped against the published
-cluster labels for the 607 visually-responsive neurons (in `clusterFnData`), the
-agreement is **ARI = 1.000** — a bijective, 100%-purity match (our cluster `j`
-= published cluster `j+1`). Panels:
-
-- **A** UMAP scatter colored by the 9 candidate cell types (NS1–4 cool,
-  BS1–4 warm, TP-1 green) with per-cluster member + mean waveforms.
-- **B** resolution sweep (modularity & #clusters); max-modularity ≈ 0.8,
-  resolution 1.0 gives 9 clusters.
-- **C** gradient-boosted-tree confusion matrix, 5-fold CV → ~91% accuracy
-  (paper reports 88%).
-- **D** UMAP at resolution 2.5 → clusters merge (5 clusters).
-
-Minor numeric differences vs the published figure (max-modularity resolution,
-classifier accuracy a few %) come from package/platform versions; the cell-type
-assignments themselves reproduce exactly.
+With waveform-only features at resolution 1.0, this pipeline reproduces the
+published 9 cell types exactly (ARI = 1.000 against the published labels; checked
+by the `figure2.py` script removed in this branch's history).
 
 ## Extension — laminar position as a new feature
 

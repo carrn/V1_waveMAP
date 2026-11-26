@@ -1,7 +1,7 @@
 [project]
-name = "figure2-repro"
+name = "laminar-features"
 version = "0.1.0"
-description = "Add your description here"
+description = "Laminar-position (and NuCLR) features for WaveMAP clustering of monkey V1 neurons"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -14,5 +14,4 @@ dependencies = [
     "seaborn>=0.13.2",
     "setuptools<80",
     "umap-learn==0.5.3",
-    "xgboost>=3.2.0",
 ]

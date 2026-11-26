@@ -1,5 +1,5 @@
 """
-Common data loading + WaveMAP helpers for reproducing Carr et al. 2025 Figure 2.
+Common data loading + WaveMAP helpers for the Carr et al. 2025 WaveMAP pipeline.
 
 Figure 2: "UMAP and Louvain Clustering on 801 negative spiking waveforms reveals
 9 candidate cell types."  (Carr, Zhu, Lee, Xia, Chen, Perliss, Moore, Chandrasekaran,

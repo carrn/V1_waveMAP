@@ -16,7 +16,7 @@ Louvain -> forced to exactly K) and score held-out functional differentiation
 (mean eta^2 over 8 tuning variables, z-scored vs a 300x label-shuffle null) --
 identical metric to functional_quality.py.
 
-Run (from figure2_repro/):  .venv/bin/python nuclr_lambda_functional_quality.py
+Run (from laminar_features/):  .venv/bin/python nuclr_lambda_functional_quality.py
 Outputs (nuclr_carr/output/):
     nuclr_lambda_functional_quality.png       (z vs mu; per-variable eta^2 at K=9)
     nuclr_lambda_functional_per_variable.png  (per-variable eta^2 vs mu)

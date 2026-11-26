@@ -15,7 +15,7 @@ Baselines kept for context, scored identically on the same units:
 NuCLR embeddings are joined to the 606 visually-responsive units by exact cortical
 depth (per-session affine; same key used to build the dataset).
 
-Run (from figure2_repro/, with its venv):
+Run (from laminar_features/, with its venv):
     .venv/bin/python nuclr_functional_quality.py
 Outputs (in nuclr_carr/output/):
     nuclr_functional_quality.png        (z vs K; per-variable eta^2 at K=9)
